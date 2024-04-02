@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo/util/todo_tile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,6 +9,33 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List toDoList = [
+    ["Laundry", false],
+    ["Homework", false],
+  ];
+  //Create a new task
+  void createNewTask() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const AlertDialog();
+        });
+  }
+
+  //checkbox tapped function
+  void checkBoxChanged(bool? value, int index) {
+    setState(() {
+      toDoList[index][1] = !toDoList[index][1];
+    });
+  }
+
+  //deleteTask
+  void deleteTask(int index) {
+    setState(() {
+      toDoList.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,8 +48,22 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: const Center(
-        child: Text('Welcome to the To Do List App!'),
+      floatingActionButton: FloatingActionButton(
+        onPressed: createNewTask,
+        child: Icon(
+          Icons.add,
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: toDoList.length,
+        itemBuilder: ((context, index) {
+          return ToDoTile(
+            taskName: toDoList[index][0],
+            taskCompleted: toDoList[index][1],
+            onChanged: (value) => checkBoxChanged(value, index),
+            deleteFunction: (context) => deleteTask(index),
+          );
+        }),
       ),
     );
   }
